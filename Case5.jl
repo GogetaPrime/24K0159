@@ -35,18 +35,6 @@ function markend!(robot,side,n)
     end
     move!(robot,inverse(side),n1)
 end
-function markside!(robot,side,size)
-    while (!isborder(robot,rotate(side)))
-        markend!(robot,side,size)
-        move!(robot,rotate(side))
-    end
-end
-function markfig!(robot,x,y)
-    arr=[x,y]
-    for side ∈ (Nord,West,Sud,Ost)
-        markside!(robot,side,arr[(Int(side)+1)%2+1])
-    end
-end
 function findborder!(robot,y)
     tempvert=do_upora!(robot,Nord)
     temphor=0
@@ -60,6 +48,23 @@ function findborder!(robot,y)
     move!(robot,Nord,tempvert)
     return [temphor,tempvert]
 end
+function to_start!(robot,horpos,vertpos)
+    move!(robot,Nord,vertpos)
+    counter_to_ost=0
+    while ((!isborder(robot,Ost)) && (counter_to_ost<horpos))
+        move!(robot,Ost)
+        counter_to_ost+=1
+    end
+    if (counter_to_ost<horpos)
+        counter_to_nord=0
+        while(isborder(robot,Ost))
+            move!(robot,Nord)
+            counter_to_nord+=1
+        end
+        move!(robot,Ost,horpos-counter_to_ost)
+        move!(robot,Sud,counter_to_nord)
+    end
+end
 function mark!(robot)
     x=do_upora!(robot,West)
     y=do_upora!(robot,Sud)
@@ -71,13 +76,5 @@ function mark!(robot)
     markrec!(r)
     move!(robot,Sud,coordarr[2])
     move!(robot,West,coordarr[1])
-    move!(robot,Nord,y)
-    temp=do_upora!(robot,Ost)
-    counter=0
-    while (isborder(robot,Ost))
-        move!(robot,Nord)
-        counter+=1
-    end
-    move!(robot,Ost,x-temp)
-    move!(robot,Sud,counter)
+    to_start!(robot,x,y)
 end
