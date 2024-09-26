@@ -6,7 +6,7 @@ function HorizonSideRobots.move!(robot,side,num_steps)
         move!(robot,side)
     end
 end
-function markline!(robot,side)
+function markside!(robot,side)
     while (isborder(robot,side))
         putmarker!(robot)
         move!(robot,rotate(side))
@@ -14,7 +14,7 @@ function markline!(robot,side)
 end
 function markrec!(robot)
     for side ∈ (Nord,West,Sud,Ost)
-        markline!(robot,side)
+        markside!(robot,side)
         putmarker!(robot)
         move!(robot,side)
     end
